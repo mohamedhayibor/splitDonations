@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+		<title>Split Donations front-end</title>
+    <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+
+		<!-- web3.js from: https://github.com/ethereum/web3.js/blob/1.0/dist/web3.min.js -->
+		<script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+		<script language="javascript" type="text/javascript" src="SplitDonationsABI.js"></script>
+  </head>
+	<body>
+		<div id="createSplitContract" class="jumbotron">
+			<div id="txStatus">
+				<h2>Split Donations between the organizer and the house.</h2>
+			</div>
+      		<form>
+			  <div class="form-group">
+			    <label for="organizerAddress">Organizer's Public address</label>
+			    <input type="text" class="form-control" id="organizerAddress" placeholder="Enter Organizer's public address">
+			  </div>
+
+			  <div class="form-group">
+			    <label for="venueAddress">Venue's Public address</label>
+			    <input type="text" class="form-control" id="venueAddress" placeholder="Enter Venue's public address">
+			  </div>
+
+			  <button type="submit" class="btn btn-primary" onClick="createSplitContract();">Deploy new SplitDonations contract</button>
+			</form>
+		</div>
+
+		<script>
+			var splitDonationsAddress = "0xE50a24D1Bfb94D11df0DF6d226d382ddEb451dEf";
+			var Web3 = require('web3');
+		    var web3 = new Web3();
+		    web3.setProvider(new web3.providers.HttpProvider("https://rinkeby.infura.io"));
+
+		    // var ABI = splitDonationsABI;
+		    // var splitDonationsContract;
+
+		    /*
+		    web3.eth.contract(ABI, splitDonationsAddress).new(function (err, contract) {
+		    	if (err) {
+		    		console.log(err);
+		    	} else {
+		    		console.log("contract address: ", contract.address);
+		    	}
+		    })
+		    */
+
+
+	    	web3.version.getNetwork(function (err, res) {
+	    		console.log("getNetwork REs: ", res);
+	    	});
+
+	    	web3.version.getNode(function (err, res) {
+	    		console.log("getNode Res: ", res);
+	    	});
+
+			
+
+		    // console.log(splitDonationsContract);
+		    console.log("End of party!");
+
+		    function createSplitContract() {
+		    	var organizerAddress = $("#organizerAddress").val();
+		    	var venueAddress = $("#venueAddress").val();
+		    	var splitdonationsContract = web3.eth.contract([{"constant":false,"inputs":[],"name":"withdraw","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"venueAddress","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"currentContractBalance","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"organizerAddress","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"deposit","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"inputs":[{"name":"_organizerAddress","type":"address"},{"name":"_venueAddress","type":"address"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"}]);
+				var splitdonations = splitdonationsContract.new(
+				   organizerAddress,
+				   venueAddress,
+				   {
+				     from: web3.eth.accounts[0], 
+				     data: '0x608060405234801561001057600080fd5b506040516040806105e083398101806040528101908080519060200190929190805190602001909291905050508073ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff1614151515610107576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040180806020018281038252602d8152602001807f646f6e6174696f6e20616363742063616e2774206265207468652073616d652081526020017f617320686f75736520616363740000000000000000000000000000000000000081525060400191505060405180910390fd5b816000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555080600160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055505050610447806101996000396000f30060806040526004361061006d576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680633ccfd60b1461007257806369ba4f6814610089578063888f26b8146100e0578063c373ec8d1461010b578063d0e30db014610162575b600080fd5b34801561007e57600080fd5b5061008761016c565b005b34801561009557600080fd5b5061009e6103af565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b3480156100ec57600080fd5b506100f56103d5565b6040518082815260200191505060405180910390f35b34801561011757600080fd5b506101206103f4565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b61016a610419565b005b6000803373ffffffffffffffffffffffffffffffffffffffff166000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16148061021757503373ffffffffffffffffffffffffffffffffffffffff16600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16145b15156102b1576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260218152602001807f596f75277265206e6f7420746865206f776e6572206f72206465706c6f79657281526020017f2e0000000000000000000000000000000000000000000000000000000000000081525060400191505060405180910390fd5b3073ffffffffffffffffffffffffffffffffffffffff163191506002828115156102d757fe5b0490506000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166108fc829081150290604051600060405180830381858888f19350505050158015610341573d6000803e3d6000fd5b50600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166108fc829081150290604051600060405180830381858888f193505050501580156103aa573d6000803e3d6000fd5b505050565b600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b60003073ffffffffffffffffffffffffffffffffffffffff1631905090565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b5600a165627a7a72305820cc77838eeff7e7d188c5a2380cf956c663abe281546763780ed4bff576322e8d0029', 
+				     gas: '4700000'
+				   }, function (e, contract){
+				    console.log(e, contract);
+				    if (typeof contract.address !== 'undefined') {
+				         console.log('Contract mined! address: ' + contract.address + ' transactionHash: ' + contract.transactionHash);
+				    }
+				 })
+		    }
+		</script>
+
+  </body>
+</html>
