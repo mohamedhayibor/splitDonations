@@ -12,10 +12,7 @@
 	<body>
 		<!-- create new splitDonation contract section -->
 		<div id="createSplitContract" class="jumbotron">
-			<div id="txStatus">
-				<h2>Split Donations between the organizer and the house.</h2>
-				<h3 id="currentContractBalance">Current contract balance: </h3>
-			</div>
+			<h2>Split Donations between the organizer and the house.</h2>
       		<form>
 			  <div class="form-group">
 			    <label for="organizerAddress">Organizer's Public address</label>
@@ -42,7 +39,7 @@
 
 				<div class="form-group">
 				    <label>Amount to donate</label>
-				    <input type="text" class="form-control" id="donationAmount" placeholder="Enter amount to donate in Ether...">
+				    <input type="number" class="form-control" id="donationAmount" placeholder="Enter amount to donate in Ether...">
 				</div>
 
 				<button type="submit" class="btn btn-primary" onClick="donate();">Donate</button>
@@ -70,18 +67,6 @@
 			    var splitContract = web3js.eth.contract([{"constant":false,"inputs":[],"name":"withdraw","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"venueAddress","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"currentContractBalance","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"organizerAddress","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"deposit","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"inputs":[{"name":"_organizerAddress","type":"address"},{"name":"_venueAddress","type":"address"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"}]);
 
 			    var splitContractInstance = splitContract.at(splitDonationsAddress);
-
-			    // Show contract's current balance
-			    splitContractInstance.currentContractBalance.call(function (err, res) {
-			    	if (err) {
-			    		console.log(">>>> Err: ", err);
-			    	} else {
-			    		console.log("Successfull call >> view function");
-			    		console.log(">>>> Res: ", res);
-			    		console.log(">>>> Res.s: ", res.s);
-			    		$("#currentContractBalance").text("Current contract balance: >>>" + res.s + " Ether");
-			    	}
-			    })
 
 			    // address from metamask > startApp() runs again at time of execution
 			    // so it will pick up the right current userAddress
@@ -151,7 +136,6 @@
 			    }
 
 			    // shitty getters
-
 			    console.log("OOOPs called Internal GUTS>>>>>")
 			    return {
 			    	splitContract: splitContract,
