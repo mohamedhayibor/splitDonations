@@ -2,12 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8">
-		<title>Split Donations front-end</title>
+	<title>Split Donations front-end</title>
     <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
 
-		<!-- web3.js from: https://github.com/ethereum/web3.js/blob/1.0/dist/web3.min.js -->
-		<script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+	<!-- web3.js from: https://github.com/ethereum/web3.js/blob/1.0/dist/web3.min.js -->
+	<script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
   </head>
 	<body>
 		<!-- create new splitDonation contract section -->
@@ -24,7 +24,7 @@
 			    <input type="text" class="form-control" id="venueAddress" placeholder="Enter Venue's public address">
 			  </div>
 
-			  <button type="submit" class="btn btn-primary" onClick="createSplitContract();">Deploy new SplitDonations contract</button>
+			  <button type="submit" class="btn btn-primary" onClick="startApp().createSplitContract();">Deploy new SplitDonations contract</button>
 			</form>
 		</div>
 
@@ -38,11 +38,11 @@
 				</div>
 
 				<div class="form-group">
-				    <label>Amount to donate</label>
+				    <label>Amount to donate in Ether</label>
 				    <input type="number" class="form-control" id="donationAmount" placeholder="Enter amount to donate in Ether...">
 				</div>
 
-				<button type="submit" class="btn btn-primary" onClick="donate();">Donate</button>
+				<button type="submit" class="btn btn-primary" onClick="startApp().submitDeposit();">Donate</button>
 			</form>
 		</div>
 
@@ -56,37 +56,37 @@
 				    <input type="text" class="form-control" id="withdrawContractAddress" placeholder="Enter contract's address">
 				</div>
 
-				<button type="submit" class="btn btn-primary" onClick="withdraw();">Withdraw donations from contract</button>
+				<button type="submit" class="btn btn-primary" onClick="startApp().withdraw();">Withdraw donations from contract</button>
 			</form>
 		</div>
 
 		<script>
 			function startApp() {
-				var splitDonationsAddress = "0xE50a24D1Bfb94D11df0DF6d226d382ddEb451dEf";
+				// "0xE50a24D1Bfb94D11df0DF6d226d382ddEb451dEf";
 
 			    var splitContract = web3js.eth.contract([{"constant":false,"inputs":[],"name":"withdraw","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"venueAddress","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"currentContractBalance","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"organizerAddress","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"deposit","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"inputs":[{"name":"_organizerAddress","type":"address"},{"name":"_venueAddress","type":"address"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"}]);
-
-			    var splitContractInstance = splitContract.at(splitDonationsAddress);
 
 			    // address from metamask > startApp() runs again at time of execution
 			    // so it will pick up the right current userAddress
 			    var userAddress = web3js.eth.accounts[0];
 
 			    function submitDeposit() {
-			    	// working somehow > gives 0 amount as donation
-			    	splitContractInstance.deposit({from: userAddress, value: 1000000000000000000}, function (err, hash) {
+			    	var depositContractAddress = $("#donateContractAddress").val();
+			    	var splitDepositInstance = splitContract.at(depositContractAddress);
+			    	var donationInEther = (10 ** 18) *  $("#donationAmount").val();
+
+			    	splitDepositInstance.deposit({from: userAddress, value: donationInEther}, function (err, hash) {
 			    		if (err) {
 			    			return error(err);
 			    		}
 
-			    		waitDepositConfirmation(hash, function() {
+			    		waitConfirmation(hash, function() {
 			    			console.log("Deposit successfully submitted");
-
 			    		});
 			    	})
 			    }
 
-			    function waitDepositConfirmation(hash, cb) {
+			    function waitConfirmation(hash, cb) {
 			    	web3js.eth.getTransactionReceipt(hash, function(err, receipt) {
 			    		if (err) {
 			    			console.log(err);
@@ -104,6 +104,22 @@
 			    			}, 1000);
 			    		}
 			    	})
+			    }
+
+			    function withdraw() {
+			    	var withdrawContractAddress = $("#withdrawContractAddress").val();
+
+			    	var splitWithdrawInstance = splitContract.at(withdrawContractAddress);
+
+			    	splitWithdrawInstance.withdraw({from: userAddress}, function (err, hash) {
+			    		if (err) {
+			    			return error(err);
+			    		}
+
+			    		waitConfirmation(hash, function() {
+			    			console.log("Withdraw Transaction was successfully mined.");
+			    		});
+			    	});
 			    }
 
 			    function createSplitContract() {
@@ -131,19 +147,15 @@
 			    	});
 
 			    	console.log("executed > created > createSplitContract");
-			    	console.log(organizerAddress);
-			    	console.log(venueAddress);
 			    }
 
 			    // shitty getters
-			    console.log("OOOPs called Internal GUTS>>>>>")
 			    return {
 			    	splitContract: splitContract,
-			    	splitContractInstance: splitContractInstance,
-			    	splitDonationsAddress: splitDonationsAddress,
 			    	userAddress: userAddress,
 			    	submitDeposit: submitDeposit,
-			    	createSplitContract: createSplitContract
+			    	createSplitContract: createSplitContract,
+			    	withdraw: withdraw
 			    }
 
 			}
@@ -161,10 +173,8 @@
 			  }
 
 			  // Now you can start your app & access web3 freely:
-			  startApp()
+			  startApp();
 			})
-
-
 		</script>
   </body>
 </html>
