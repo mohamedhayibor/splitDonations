@@ -8,20 +8,31 @@
 
 	<!-- web3.js from: https://github.com/ethereum/web3.js/blob/1.0/dist/web3.min.js -->
 	<script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+	<style>
+		input {
+			margin: 0 auto;
+		}
+	</style>
   </head>
-	<body>
+	<body class="container">
 		<!-- create new splitDonation contract section -->
-		<div id="createSplitContract" class="jumbotron">
-			<h2>Split Donations between the organizer and the house.</h2>
+		<div class="jumbotron pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+	      <h1 class="display-4">Split Donations between the organizer and the house.</h1>
+	      <!-- <p class="lead">Quickly build an effective pricing table for your potential customers with this Bootstrap example. It's built with default Bootstrap components and utilities with little customization.</p> -->
+	    
+	      <!-- lazy spacing -->
+	      <br>
+
+			<!-- <div id="createSplitContract" class="jumbotron"> class="col-md-offset-3" -->
       		<form>
 			  <div class="form-group">
-			    <label for="organizerAddress">Organizer's Public address</label>
-			    <input type="text" class="form-control" id="organizerAddress" placeholder="Enter Organizer's public address">
+			    <!-- <label for="organizerAddress">Organizer's Public address</label> -->
+			    <input type="text" class="form-control col-md-6 col-md-offset-3 text-center" id="organizerAddress" placeholder="Enter Organizer's public address">
 			  </div>
 
 			  <div class="form-group">
-			    <label for="venueAddress">Venue's Public address</label>
-			    <input type="text" class="form-control" id="venueAddress" placeholder="Enter Venue's public address">
+			    <!-- <label for="venueAddress">Venue's Public address</label> -->
+			    <input type="text" class="form-control col-md-6 col-md-offset-3 text-center" id="venueAddress" placeholder="Enter Venue's public address">
 			  </div>
 
 			  <button type="submit" class="btn btn-primary" onClick="startApp().createSplitContract();">Deploy new SplitDonations contract</button>
@@ -29,32 +40,69 @@
 		</div>
 
 		<!-- donate section -->
+		
 		<div id="donate" class="jumbotron">
-			<h2>Donate</h2>
-			<form>
+			
+			<form class="text-center">
+				<h2>Donate</h2>
 				<div class="form-group">
-				    <label>Contract's address</label>
-				    <input type="text" class="form-control" id="donateContractAddress" placeholder="Enter contract's address">
+				    <!-- <label>Contract's address</label> -->
+				    <input type="text" class="form-control col-md-6 col-md-offset-3 text-center" id="donateContractAddress" placeholder="Enter contract's address">
 				</div>
 
-				<div class="form-group">
+				<!-- <div class="form-group">
 				    <label>Amount to donate in Ether</label>
 				    <input type="number" class="form-control" id="donationAmount" placeholder="Enter amount to donate in Ether...">
 				</div>
 
-				<button type="submit" class="btn btn-primary" onClick="startApp().submitDeposit();">Donate</button>
-			</form>
-		</div>
+				<button type="submit" class="btn btn-primary" onClick="startApp().submitDeposit();">Donate</button> -->
+				<div>
+			      <div class="card-deck mb-3 text-center">
+			        <div class="card mb-4 box-shadow">
+			          <div class="card-header">
+			            <h4 class="my-0 font-weight-normal">Gold</h4>
+			          </div>
+			          <div class="card-body">
+			            <h1 class="card-title pricing-card-title">Ξ 0.1 <small class="text-muted">ether</small></h1>
 
+			            <button type="button" class="btn btn-lg btn-block btn-outline-primary">Donate</button>
+			          </div>
+			        </div>
+			        <div class="card mb-4 box-shadow">
+			          <div class="card-header">
+			            <h4 class="my-0 font-weight-normal">Bronze</h4>
+			          </div>
+			          <div class="card-body">
+			            <h1 class="card-title pricing-card-title">Ξ 0.01 <small class="text-muted">ether</small></h1>
 
-		<!-- Withdraw section -->
-		<div id="withdraw" class="jumbotron">
-			<h2>Withdraw</h2>
-			<form>
+			            <button type="button" class="btn btn-lg btn-block btn-primary">Donate</button>
+			          </div>
+			        </div>
+			        <div class="card mb-4 box-shadow">
+			          <div class="card-header">
+			            <h4 class="my-0 font-weight-normal">Custom</h4>
+			          </div>
+			          <div class="card-body">
+			            <!-- <h1 class="card-title pricing-card-title"></h1> class="form-control" -->
+			            <input type="number" class="form-control card-title pricing-card-title" id="donationAmount" placeholder="Enter ether amount">
+
+			            <button type="button" class="btn btn-lg btn-block btn-dark">Donate</button>
+			          </div>
+			        </div>
+			    </div>
+
+			    <!-- lazy spacing -->
+	      		<br>
+			
+				<!-- Withdraw section -->
+				<h2>Withdraw</h2>
+			
+				<!--
 				<div class="form-group">
 				    <label>Contract's address</label>
 				    <input type="text" class="form-control" id="withdrawContractAddress" placeholder="Enter contract's address">
 				</div>
+				-->
 
 				<button type="submit" class="btn btn-primary" onClick="startApp().withdraw();">Withdraw donations from contract</button>
 			</form>
@@ -75,6 +123,7 @@
 			    	var splitDepositInstance = splitContract.at(depositContractAddress);
 			    	var donationInEther = (10 ** 18) *  $("#donationAmount").val();
 
+			    	// see pattern at https://programtheblockchain.com/posts/2017/12/13/building-decentralized-apps-with-ethereum-and-javascript/
 			    	splitDepositInstance.deposit({from: userAddress, value: donationInEther}, function (err, hash) {
 			    		if (err) {
 			    			return error(err);
@@ -100,7 +149,7 @@
 			    		} else {
 			    			// try again in 1s
 			    			window.setTimeout(function () {
-			    				waitDepositConfirmation(hash, cb);
+			    				waitConfirmation(hash, cb);
 			    			}, 1000);
 			    		}
 			    	})
