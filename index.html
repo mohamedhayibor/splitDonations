@@ -15,23 +15,20 @@
 	</style>
   </head>
 	<body class="container">
+
 		<!-- create new splitDonation contract section -->
 		<div class="jumbotron pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-	      <h1 class="display-4">Split Donations between the organizer and the house.</h1>
-	      <!-- <p class="lead">Quickly build an effective pricing table for your potential customers with this Bootstrap example. It's built with default Bootstrap components and utilities with little customization.</p> -->
+	      	<h1 class="display-4">Split Donations between the organizer and the house.</h1>
 	    
-	      <!-- lazy spacing -->
-	      <br>
+	      	<!-- lazy spacing -->
+	      	<br>
 
-			<!-- <div id="createSplitContract" class="jumbotron"> class="col-md-offset-3" -->
-      		<form>
+	  		<form>
 			  <div class="form-group">
-			    <!-- <label for="organizerAddress">Organizer's Public address</label> -->
 			    <input type="text" class="form-control col-md-6 col-md-offset-3 text-center" id="organizerAddress" placeholder="Enter Organizer's public address" required>
 			  </div>
 
 			  <div class="form-group">
-			    <!-- <label for="venueAddress">Venue's Public address</label> -->
 			    <input type="text" class="form-control col-md-6 col-md-offset-3 text-center" id="venueAddress" placeholder="Enter Venue's public address" required>
 			  </div>
 
@@ -40,7 +37,6 @@
 		</div>
 
 		<!-- donate section -->
-		
 		<div id="donate" class="jumbotron">
 			
 			<form class="text-center">
@@ -76,7 +72,6 @@
 			            <h4 class="my-0 font-weight-normal">Custom</h4>
 			          </div>
 			          <div class="card-body">
-			            <!-- <h1 class="card-title pricing-card-title"></h1> class="form-control" -->
 			            <input type="number" class="form-control card-title pricing-card-title" id="donationAmount" placeholder="Enter ether amount" required>
 
 			            <button type="button" class="btn btn-lg btn-block btn-dark" onClick="startApp().submitDeposit();">Donate</button>
@@ -105,6 +100,14 @@
 
 			    function submitDeposit(donationAmount) {
 			    	var contractAddress = $("#contractAddress").val();
+
+			    	if (contractAddress < 40) {
+			    		alert("Invalid contract Address");
+			    		return; // return everything
+			    	}
+
+			    	if (contractAddress.length == 40) contractAddress = "0x" + contractAddress;
+
 			    	var splitDepositInstance = splitContract.at(contractAddress);
 			    	var userDonationChoice = donationAmount || $("#donationAmount").val();
 			    	var donationInEther = (10 ** 18) * userDonationChoice;
@@ -144,6 +147,13 @@
 			    function withdraw() {
 			    	var contractAddress = $("#contractAddress").val();
 
+			    	if (contractAddress.length < 40) {
+			    		alert("Invalid contract address!");
+			    		return; // stop everything
+			    	}
+
+			    	if (contractAddress.length == 40) contractAddress = "0x" + contractAddress;
+
 			    	var splitWithdrawInstance = splitContract.at(contractAddress);
 
 			    	splitWithdrawInstance.withdraw({from: userAddress}, function (err, hash) {
@@ -160,6 +170,15 @@
 			    function createSplitContract() {
 			    	var organizerAddress = $("#organizerAddress").val();
 			    	var venueAddress = $("#venueAddress").val();
+
+			    	if (organizerAddress.length < 40 || venueAddress.length < 40 ) {
+			    		alert("Invalid ether addresses!");
+			    		return; // stop everything
+			    	}
+
+			    	// add 0x if not included
+			    	if (organizerAddress.length == 40) organizerAddress = "0x" + organizerAddress;
+			    	if (venueAddress.length == 40) venueAddress = "0x" + venueAddress;
 
 			    	var newContract = splitContract.new(organizerAddress, venueAddress, {
 			    		from: userAddress,
