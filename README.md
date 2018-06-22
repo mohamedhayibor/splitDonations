@@ -20,3 +20,16 @@ Notes:
 * The contract is the owner of the funds until split between event organanizer and venue owner.
 * Working on the front-end but for now, you can interact with it with [mycrypto](https://mycrypto.com/contracts/interact)
 
+
+Dev setup:
+========
+
+For local development, you must run a [local server](https://github.com/MetaMask/faq/blob/master/DEVELOPERS.md#globe_with_meridians-https---web-server-required).
+
+Easy/fast way: go to source path
+
+```sh
+$ python -m SimpleHTTPServer
+```
+
+Then go to [localhost:8000](http://localhost:8000/)
