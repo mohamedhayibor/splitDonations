@@ -27,12 +27,12 @@
       		<form>
 			  <div class="form-group">
 			    <!-- <label for="organizerAddress">Organizer's Public address</label> -->
-			    <input type="text" class="form-control col-md-6 col-md-offset-3 text-center" id="organizerAddress" placeholder="Enter Organizer's public address">
+			    <input type="text" class="form-control col-md-6 col-md-offset-3 text-center" id="organizerAddress" placeholder="Enter Organizer's public address" required>
 			  </div>
 
 			  <div class="form-group">
 			    <!-- <label for="venueAddress">Venue's Public address</label> -->
-			    <input type="text" class="form-control col-md-6 col-md-offset-3 text-center" id="venueAddress" placeholder="Enter Venue's public address">
+			    <input type="text" class="form-control col-md-6 col-md-offset-3 text-center" id="venueAddress" placeholder="Enter Venue's public address" required>
 			  </div>
 
 			  <button type="submit" class="btn btn-primary" onClick="startApp().createSplitContract();">Deploy new SplitDonations contract</button>
@@ -46,16 +46,9 @@
 			<form class="text-center">
 				<h2>Donate</h2>
 				<div class="form-group">
-				    <!-- <label>Contract's address</label> -->
-				    <input type="text" class="form-control col-md-6 col-md-offset-3 text-center" id="donateContractAddress" placeholder="Enter contract's address">
+				    <input type="text" class="form-control col-md-6 col-md-offset-3 text-center" id="contractAddress" placeholder="Enter contract's address" required>
 				</div>
 
-				<!-- <div class="form-group">
-				    <label>Amount to donate in Ether</label>
-				    <input type="number" class="form-control" id="donationAmount" placeholder="Enter amount to donate in Ether...">
-				</div>
-
-				<button type="submit" class="btn btn-primary" onClick="startApp().submitDeposit();">Donate</button> -->
 				<div>
 			      <div class="card-deck mb-3 text-center">
 			        <div class="card mb-4 box-shadow">
@@ -65,7 +58,7 @@
 			          <div class="card-body">
 			            <h1 class="card-title pricing-card-title">Ξ 0.1 <small class="text-muted">ether</small></h1>
 
-			            <button type="button" class="btn btn-lg btn-block btn-outline-primary">Donate</button>
+			            <button type="button" class="btn btn-lg btn-block btn-outline-primary" onClick="startApp().submitDeposit(0.1);">Donate</button>
 			          </div>
 			        </div>
 			        <div class="card mb-4 box-shadow">
@@ -75,7 +68,7 @@
 			          <div class="card-body">
 			            <h1 class="card-title pricing-card-title">Ξ 0.01 <small class="text-muted">ether</small></h1>
 
-			            <button type="button" class="btn btn-lg btn-block btn-primary">Donate</button>
+			            <button type="button" class="btn btn-lg btn-block btn-primary" onClick="startApp().submitDeposit(0.01);">Donate</button>
 			          </div>
 			        </div>
 			        <div class="card mb-4 box-shadow">
@@ -84,9 +77,9 @@
 			          </div>
 			          <div class="card-body">
 			            <!-- <h1 class="card-title pricing-card-title"></h1> class="form-control" -->
-			            <input type="number" class="form-control card-title pricing-card-title" id="donationAmount" placeholder="Enter ether amount">
+			            <input type="number" class="form-control card-title pricing-card-title" id="donationAmount" placeholder="Enter ether amount" required>
 
-			            <button type="button" class="btn btn-lg btn-block btn-dark">Donate</button>
+			            <button type="button" class="btn btn-lg btn-block btn-dark" onClick="startApp().submitDeposit();">Donate</button>
 			          </div>
 			        </div>
 			    </div>
@@ -96,14 +89,6 @@
 			
 				<!-- Withdraw section -->
 				<h2>Withdraw</h2>
-			
-				<!--
-				<div class="form-group">
-				    <label>Contract's address</label>
-				    <input type="text" class="form-control" id="withdrawContractAddress" placeholder="Enter contract's address">
-				</div>
-				-->
-
 				<button type="submit" class="btn btn-primary" onClick="startApp().withdraw();">Withdraw donations from contract</button>
 			</form>
 		</div>
@@ -118,12 +103,12 @@
 			    // so it will pick up the right current userAddress
 			    var userAddress = web3js.eth.accounts[0];
 
-			    function submitDeposit() {
-			    	var depositContractAddress = $("#donateContractAddress").val();
-			    	var splitDepositInstance = splitContract.at(depositContractAddress);
-			    	var donationInEther = (10 ** 18) *  $("#donationAmount").val();
+			    function submitDeposit(donationAmount) {
+			    	var contractAddress = $("#contractAddress").val();
+			    	var splitDepositInstance = splitContract.at(contractAddress);
+			    	var userDonationChoice = donationAmount || $("#donationAmount").val();
+			    	var donationInEther = (10 ** 18) * userDonationChoice;
 
-			    	// see pattern at https://programtheblockchain.com/posts/2017/12/13/building-decentralized-apps-with-ethereum-and-javascript/
 			    	splitDepositInstance.deposit({from: userAddress, value: donationInEther}, function (err, hash) {
 			    		if (err) {
 			    			return error(err);
@@ -135,6 +120,7 @@
 			    	})
 			    }
 
+			    // see pattern at https://programtheblockchain.com/posts/2017/12/13/building-decentralized-apps-with-ethereum-and-javascript/
 			    function waitConfirmation(hash, cb) {
 			    	web3js.eth.getTransactionReceipt(hash, function(err, receipt) {
 			    		if (err) {
@@ -156,9 +142,9 @@
 			    }
 
 			    function withdraw() {
-			    	var withdrawContractAddress = $("#withdrawContractAddress").val();
+			    	var contractAddress = $("#contractAddress").val();
 
-			    	var splitWithdrawInstance = splitContract.at(withdrawContractAddress);
+			    	var splitWithdrawInstance = splitContract.at(contractAddress);
 
 			    	splitWithdrawInstance.withdraw({from: userAddress}, function (err, hash) {
 			    		if (err) {
