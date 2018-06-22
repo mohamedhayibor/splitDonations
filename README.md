@@ -5,7 +5,7 @@ I have noticed a common scheme for event organizers and venues.
 
 > Split the donations (between the event organizer) and a venue (bar, coffee shop, coworking space...) (50 / 50)%
 
-* Front end (coming up soon)
+* [Front end](https://mohamedhayibor.github.io/splitDonations/) (wip)
 * [contract code](https://github.com/mohamedhayibor/splitDonations/blob/master/contracts/splitDonations.sol) | deployed on [rinkeby](https://rinkeby.etherscan.io/address/0xe50a24d1bfb94d11df0df6d226d382ddeb451def).
 
 Usage:
@@ -17,7 +17,7 @@ Notes:
 =====
 
 * Assumption: The organizer will make sure of the conversion to fiat to be given to non-profits.
-* The contract is the owner of the funds until split between event organanizer and venue owner.
+* The contract is the owner of the funds until split between event organizer and venue owner.
 * Working on the front-end but for now, you can interact with it with [mycrypto](https://mycrypto.com/contracts/interact)
 
 
