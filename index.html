@@ -45,6 +45,12 @@
 				    <input type="text" class="form-control col-md-6 col-md-offset-3 text-center" id="contractAddress" placeholder="Enter contract's address" required>
 				</div>
 
+				<!-- Alert the user of the organizer and venue owner -->
+				<!-- <div class="alert alert-warning" role="alert"></div> -->
+				<!-- A simple warning alert—check it out! -->
+				<div id="fetchOrgAddr" rol="alert"></div>
+				<div id="fetchVenAddr" rol="alert"></div>
+
 				<div>
 			      <div class="card-deck mb-3 text-center">
 			        <div class="card mb-4 box-shadow">
@@ -93,6 +99,45 @@
 				// "0xE50a24D1Bfb94D11df0DF6d226d382ddEb451dEf";
 
 			    var splitContract = web3js.eth.contract([{"constant":false,"inputs":[],"name":"withdraw","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"venueAddress","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"currentContractBalance","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"organizerAddress","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"deposit","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"inputs":[{"name":"_organizerAddress","type":"address"},{"name":"_venueAddress","type":"address"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"}]);
+
+			    // Extra layer of security for user to double check organizer and venue address
+			    $("#contractAddress").on('keyup', function() {
+
+			    	var contractAdr = $("#contractAddress").val();
+
+			    	if (contractAdr < 40) {
+			    		console.log(">> Invalid address, Stop everything.");
+			    		return; // return everything
+			    	}
+
+			    	if (contractAdr.length == 40) contractAdr = "0x" + contractAdr;
+
+					var contractInstance = splitContract.at(contractAdr);
+
+					var orgAdr = contractInstance.organizerAddress.call(function (err, res) {
+						if (err) {
+							return error(err);
+						} else {
+							console.log("successfully fetched organizerAddress");
+						}
+
+						$("#fetchOrgAddr").addClass("alert alert-warning")
+						.text("Organizer address: " + res);
+					});
+
+					var venueAdr = contractInstance.venueAddress.call(function (err, res) {
+						if (err) {
+							return error(err);
+						} else {
+							console.log("successfully fetched venueAddress");
+						}
+
+						$("#fetchVenAddr").addClass("alert alert-warning")
+						.text("Venue address: " + res);
+					});
+
+				});
+
 
 			    // address from metamask > startApp() runs again at time of execution
 			    // so it will pick up the right current userAddress
