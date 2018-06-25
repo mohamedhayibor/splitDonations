@@ -154,7 +154,7 @@
 			    	if (contractAddress.length == 40) contractAddress = "0x" + contractAddress;
 
 			    	var splitDepositInstance = splitContract.at(contractAddress);
-			    	var userDonationChoice = donationAmount || $("#donationAmount").val().trim();
+			    	var userDonationChoice = donationAmount || $("#donationAmount").val();
 			    	var donationInEther = (10 ** 18) * userDonationChoice;
 
 			    	splitDepositInstance.deposit({from: userAddress, value: donationInEther}, function (err, hash) {
