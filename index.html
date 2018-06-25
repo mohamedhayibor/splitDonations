@@ -103,7 +103,7 @@
 			    // Extra layer of security for user to double check organizer and venue address
 			    $("#contractAddress").on('keyup', function() {
 
-			    	var contractAdr = $("#contractAddress").val();
+			    	var contractAdr = $("#contractAddress").val().trim();
 
 			    	if (contractAdr < 40) {
 			    		console.log(">> Invalid address, Stop everything.");
@@ -144,7 +144,7 @@
 			    var userAddress = web3js.eth.accounts[0];
 
 			    function submitDeposit(donationAmount) {
-			    	var contractAddress = $("#contractAddress").val();
+			    	var contractAddress = $("#contractAddress").val().trim();
 
 			    	if (contractAddress < 40) {
 			    		alert("Invalid contract Address");
@@ -154,7 +154,7 @@
 			    	if (contractAddress.length == 40) contractAddress = "0x" + contractAddress;
 
 			    	var splitDepositInstance = splitContract.at(contractAddress);
-			    	var userDonationChoice = donationAmount || $("#donationAmount").val();
+			    	var userDonationChoice = donationAmount || $("#donationAmount").val().trim();
 			    	var donationInEther = (10 ** 18) * userDonationChoice;
 
 			    	splitDepositInstance.deposit({from: userAddress, value: donationInEther}, function (err, hash) {
@@ -190,7 +190,7 @@
 			    }
 
 			    function withdraw() {
-			    	var contractAddress = $("#contractAddress").val();
+			    	var contractAddress = $("#contractAddress").val().trim();
 
 			    	if (contractAddress.length < 40) {
 			    		alert("Invalid contract address!");
@@ -213,8 +213,8 @@
 			    }
 
 			    function createSplitContract() {
-			    	var organizerAddress = $("#organizerAddress").val();
-			    	var venueAddress = $("#venueAddress").val();
+			    	var organizerAddress = $("#organizerAddress").val().trim();
+			    	var venueAddress = $("#venueAddress").val().trim();
 
 			    	if (organizerAddress.length < 40 || venueAddress.length < 40 ) {
 			    		alert("Invalid ether addresses!");
