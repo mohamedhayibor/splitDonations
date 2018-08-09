@@ -18,6 +18,7 @@
 
 		<!-- create new splitDonation contract section -->
 		<div class="jumbotron pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+			<div id="notUsingMetamask" rol="alert"></div>
 	      	<h1 class="display-4">Split Donations between the organizer and the house.</h1>
 	    
 	      	<!-- lazy spacing -->
@@ -97,6 +98,23 @@
 		</div>
 
 		<script>
+			window.addEventListener('load', function() {
+
+			  // Checking if Web3 has been injected by the browser (Mist/MetaMask)
+			  if (typeof web3 !== 'undefined') {
+			    // Use Mist/MetaMask's provider
+			    web3js = new Web3(web3.currentProvider);
+			  } else {
+			    $("#notUsingMetamask").addClass("alert alert-warning")
+					.text("Install Metamask in order to use this site :(");
+			    // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
+			    web3js = new Web3(new Web3.providers.HttpProvider("https://infura.io/"));
+			  }
+
+			  // Now you can start your app & access web3 freely:
+			  startApp();
+			});
+
 			function startApp() {
 				// "0xE50a24D1Bfb94D11df0DF6d226d382ddEb451dEf";
 
@@ -259,22 +277,6 @@
 			    }
 
 			}
-
-		    window.addEventListener('load', function() {
-
-			  // Checking if Web3 has been injected by the browser (Mist/MetaMask)
-			  if (typeof web3 !== 'undefined') {
-			    // Use Mist/MetaMask's provider
-			    web3js = new Web3(web3.currentProvider);
-			  } else {
-			    console.log('No web3? You should consider trying MetaMask!')
-			    // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
-			    web3js = new Web3(new Web3.providers.HttpProvider("https://infura.io/"));
-			  }
-
-			  // Now you can start your app & access web3 freely:
-			  startApp();
-			})
 		</script>
   </body>
 </html>
