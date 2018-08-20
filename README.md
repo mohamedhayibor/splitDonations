@@ -11,8 +11,6 @@ I have noticed a common scheme for event organizers and venues.
 Usage:
 =========
 
-![vault image](vault1.jpg)
-
 Just tell the attendees the address of your contract, then they can donate whatever amount they wish using metamask.
 
 * Assumption: The organizer will make sure of the conversion to fiat to be given to non-profits.

@@ -5,6 +5,8 @@
 	<title>Split Donations front-end</title>
     <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+	<link href="https://fonts.googleapis.com/css?family=Teko" rel="stylesheet">
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 	<!-- web3.js from: https://github.com/ethereum/web3.js/blob/1.0/dist/web3.min.js -->
 	<script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
@@ -12,95 +14,159 @@
 		input {
 			margin: 0 auto;
 		}
+		* {
+			font-family: 'Teko', cursive;
+		}
+		.ethSection {
+		    padding: 100px 0;
+		}
+		.ethLogo {
+		    width: 400px;
+		    max-width: 80%;
+		}
 	</style>
   </head>
-	<body class="container">
+	<body>
+		<div class="container">
+			<!-- create new splitDonation contract section -->
+			<div class="jumbotron pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+				<div id="notUsingMetamask" rol="alert"></div>
+		      	<h1 class="display-4">Split Donations between the organizer and the house.</h1>
+		    
+		      	<!-- lazy spacing -->
+		      	<br>
 
-		<!-- create new splitDonation contract section -->
-		<div class="jumbotron pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-			<div id="notUsingMetamask" rol="alert"></div>
-	      	<h1 class="display-4">Split Donations between the organizer and the house.</h1>
-	    
-	      	<!-- lazy spacing -->
-	      	<br>
+		  		<form>
+				  <div class="form-group">
+				    <input type="text" class="form-control col-md-6 col-md-offset-3 text-center" id="organizerAddress" placeholder="Enter Organizer's public address" required>
+				  </div>
 
-	  		<form>
-			  <div class="form-group">
-			    <input type="text" class="form-control col-md-6 col-md-offset-3 text-center" id="organizerAddress" placeholder="Enter Organizer's public address" required>
-			  </div>
+				  <div class="form-group">
+				    <input type="text" class="form-control col-md-6 col-md-offset-3 text-center" id="venueAddress" placeholder="Enter Venue's public address" required>
+				  </div>
 
-			  <div class="form-group">
-			    <input type="text" class="form-control col-md-6 col-md-offset-3 text-center" id="venueAddress" placeholder="Enter Venue's public address" required>
-			  </div>
+				  <button type="submit" class="btn btn-lg btn-primary" onClick="startApp().createSplitContract();">
+				  	<img height="31" src="ethereumLogo.svg">
+				  	<strong>Deploy new SplitDonations contract</strong>
+				  </button>
+				</form>
+			</div>
 
-			  <button type="submit" class="btn btn-primary" onClick="startApp().createSplitContract();">Deploy new SplitDonations contract</button>
-			</form>
+			<!-- donate section -->
+			<div id="donate" class="jumbotron">
+				
+				<form class="text-center">
+					<h2>Donate</h2>
+					<div class="form-group">
+					    <input type="text" class="form-control col-md-6 col-md-offset-3 text-center" id="contractAddress" placeholder="Enter contract's address" required>
+					</div>
+
+					<br>
+
+					<!-- Alert the user of the organizer and venue owner -->
+					<!-- <div class="alert alert-warning" role="alert"></div> -->
+					<!-- A simple warning alert—check it out! -->
+					<div id="fetchOrgAddr" rol="alert"></div>
+					<div id="fetchVenAddr" rol="alert"></div>
+
+					<div>
+				      <div class="card-deck mb-3 text-center">
+				        <div class="card mb-4 box-shadow">
+				          <div class="card-header">
+				            <h4 class="my-0 font-weight-normal">Gold</h4>
+				          </div>
+				          <div class="card-body">
+				            <h1 class="card-title pricing-card-title">Ξ 0.1 <small class="text-muted">ether</small></h1>
+
+				            <button type="button" class="btn btn-lg btn-block btn-outline-primary" onClick="startApp().submitDeposit(0.1);">
+				            	<img height="31" src="ethereumLogo.svg">
+				            	<strong>Donate</strong>
+				            </button>
+				          </div>
+				        </div>
+				        <div class="card mb-4 box-shadow">
+				          <div class="card-header">
+				            <h4 class="my-0 font-weight-normal">Bronze</h4>
+				          </div>
+				          <div class="card-body">
+				            <h1 class="card-title pricing-card-title">Ξ 0.01 <small class="text-muted">ether</small></h1>
+
+				            <button type="button" class="btn btn-lg btn-block btn-primary" onClick="startApp().submitDeposit(0.01);">
+				            	<img height="31" src="ethereumLogo.svg">
+				            	<strong>Donate</strong>
+				            </button>
+				          </div>
+				        </div>
+				        <div class="card mb-4 box-shadow">
+				          <div class="card-header">
+				            <h4 class="my-0 font-weight-normal">Custom</h4>
+				          </div>
+				          <div class="card-body">
+				            <input type="number" class="form-control card-title pricing-card-title" id="donationAmount" placeholder="Enter ether amount" required>
+
+				            <button type="button" class="btn btn-lg btn-block btn-dark" onClick="startApp().submitDeposit();">
+				            	<img height="31" src="ethereumLogo.svg">
+				            	<strong>Donate</strong>
+				            </button>
+				          </div>
+				        </div>
+				    </div>
+
+				    <!-- lazy spacing -->
+		      		<br>
+				
+					<!-- Withdraw section -->
+					<h2>Withdraw</h2>
+					<button type="submit" class="btn btn-lg btn-primary" onClick="startApp().withdraw();">
+						<img height="31" src="ethereumLogo.svg">
+						<strong>Withdraw donations</strong>
+					</button>
+				</form>
+			</div>
+			</form>	
 		</div>
+		<!-- end of main container -->
+		
+		<!-- Dapp Features -->
+		<section class="dapp_features">
+		<div class="container">
 
-		<!-- donate section -->
-		<div id="donate" class="jumbotron">
-			
-			<form class="text-center">
-				<h2>Donate</h2>
-				<div class="form-group">
-				    <input type="text" class="form-control col-md-6 col-md-offset-3 text-center" id="contractAddress" placeholder="Enter contract's address" required>
+			<div class="row text-center">
+				<div class="col-sm-4 col-md-4">
+					<i class="fas fa-lock fa-4x"></i>
+					<br>
+					<h1 class="text-uppercase">Utmost Security</h1>
+					<p class="lead" style="color:#888;">The only way someone could steal the eth in the smart contract is by stealing the organizer's or venue onwer's private key</p>
 				</div>
-
-				<br>
-
-				<!-- Alert the user of the organizer and venue owner -->
-				<!-- <div class="alert alert-warning" role="alert"></div> -->
-				<!-- A simple warning alert—check it out! -->
-				<div id="fetchOrgAddr" rol="alert"></div>
-				<div id="fetchVenAddr" rol="alert"></div>
-
-				<div>
-			      <div class="card-deck mb-3 text-center">
-			        <div class="card mb-4 box-shadow">
-			          <div class="card-header">
-			            <h4 class="my-0 font-weight-normal">Gold</h4>
-			          </div>
-			          <div class="card-body">
-			            <h1 class="card-title pricing-card-title">Ξ 0.1 <small class="text-muted">ether</small></h1>
-
-			            <button type="button" class="btn btn-lg btn-block btn-outline-primary" onClick="startApp().submitDeposit(0.1);">Donate</button>
-			          </div>
-			        </div>
-			        <div class="card mb-4 box-shadow">
-			          <div class="card-header">
-			            <h4 class="my-0 font-weight-normal">Bronze</h4>
-			          </div>
-			          <div class="card-body">
-			            <h1 class="card-title pricing-card-title">Ξ 0.01 <small class="text-muted">ether</small></h1>
-
-			            <button type="button" class="btn btn-lg btn-block btn-primary" onClick="startApp().submitDeposit(0.01);">Donate</button>
-			          </div>
-			        </div>
-			        <div class="card mb-4 box-shadow">
-			          <div class="card-header">
-			            <h4 class="my-0 font-weight-normal">Custom</h4>
-			          </div>
-			          <div class="card-body">
-			            <input type="number" class="form-control card-title pricing-card-title" id="donationAmount" placeholder="Enter ether amount" required>
-
-			            <button type="button" class="btn btn-lg btn-block btn-dark" onClick="startApp().submitDeposit();">Donate</button>
-			          </div>
-			        </div>
-			    </div>
-
-			    <!-- lazy spacing -->
-	      		<br>
-			
-				<!-- Withdraw section -->
-				<h2>Withdraw</h2>
-				<button type="submit" class="btn btn-primary" onClick="startApp().withdraw();">Withdraw donations from contract</button>
-			</form>
-
-			<!-- Dimissible transaction confirmation footer alert -->
-			<footer id="txStatus" class="fixed-bottom container">
-			</footer>
+				<div class="col-sm-4 col-md-4">
+					<i class="fas fa-pen-nib fa-4x"></i>
+					<h1 class="text-uppercase">Ease</h1>
+					<p class="lead" style="color:#888;">Get donations from anybody as a simple Eth transfer transaction</p>
+				</div>
+				<div class="col-sm-4 col-md-4">
+					<i class="fas fa-piggy-bank fa-4x"></i>
+					<h1 class="text-uppercase">It's own bank</h1>
+					<p class="lead" style="color:#888;">Each contract retains received Eth as a vault.</p>
+				</div> 
+			</div>
 
 		</div>
+		</section>
+
+
+		<!-- powered by Eth -->
+		<section class="ethSection container text-center"><a href="https://ethereum.org" target="_blank" rel="noopener noreferrer"><img src="powered-by-ethereum.png" class="ethLogo" alt=""></a></section>	
+		
+		<!-- contact -->
+		<div class="mastfoot text-center">
+	        <div class="inner">
+	          <p>Built with love by <a target="_blank" href="https://twitter.com/mohamedhayibor">Mo</a></p>
+	        </div>
+	    </div>
+
+		<!-- Dimissible transaction confirmation footer alert -->
+		<footer id="txStatus" class="fixed-bottom container">
+		</footer>
 
 		<script>
 			window.addEventListener('load', function() {
